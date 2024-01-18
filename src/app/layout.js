@@ -1,6 +1,9 @@
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import "./styles.css"
 import "modern-normalize";
+import Head from "next/head";
+import NavBar from "@/components/NavBar/NavBar";
 
 const openSans = Open_Sans({
   weight: ["300"],
@@ -15,7 +18,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={openSans.className}>{children}</body>
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <body className={openSans.className}>
+        <header className="header">
+          <NavBar />
+        </header>
+
+        {children}
+      </body>
     </html>
   );
 }

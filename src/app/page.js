@@ -1,3 +1,3 @@
 export default function Home() {
-  return <main className="container">hello Next</main>;
+  return <main className="container">Home page</main>;
 }

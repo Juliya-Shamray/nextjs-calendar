@@ -1,0 +1,18 @@
+.nav-list {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+.nav {
+    padding: 15px;
+}
+
+.nav-link {
+    transition: text-shadow 250ms linear;
+    font-weight: 700;
+}
+
+.nav-link:hover {
+    text-shadow: 1px 1px 1px black;
+}
