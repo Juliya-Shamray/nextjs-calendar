@@ -1,9 +1,13 @@
 import User from "@/models/User";
 
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 
 export const POST = async (req, res) => {
+  const SECRET_KEY = process.env.SECRET_KEY;
   const { email, password } = await req.json();
+
   const user = await User.findOne({ email });
   if (!user) {
     return new NextResponse("Email or password is wrong", { status: 401 });
@@ -23,7 +27,11 @@ export const POST = async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, { token });
 
-  res.json({
+  return NextResponse.json({
+    user: {
+      email: user.email,
+      name: user.userName,
+    },
     token,
   });
 };

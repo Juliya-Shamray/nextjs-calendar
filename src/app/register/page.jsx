@@ -1,8 +1,15 @@
 "use client";
+import { registerThunk } from "@/redux/auth/operations";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const Register = () => {
-  const handleSubmit = async (e) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     const [userName, email, password] = e.target.elements;
 
@@ -11,26 +18,21 @@ const Register = () => {
       email: email.value,
       password: password.value,
     };
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newUser),
-    });
-
-    if (res.status === 409) {
-      console.log("User is already registered");
-      return;
-    }
-    if (res.status === 500) {
-      console.log("oops problem on server");
-      return;
-    }
-
-    const data = await res.json();
-    console.log(data);
+    dispatch(registerThunk(newUser))
+      .unwrap()
+      .then(() => {
+        toast.success(`Congratulations!!! You have successfully registered`);
+        router.push("/login");
+      })
+      .catch((error) => {
+        if (error === 409) {
+          router.push("/login");
+          return toast.error("You are already registered");
+        }
+        return toast.error("Data is not valid");
+      });
   };
+
   return (
     <div className="container">
       <h2 className="title">Register</h2>
