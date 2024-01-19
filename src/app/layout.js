@@ -1,9 +1,13 @@
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
-import "./styles.css"
+import "./styles.css";
 import "modern-normalize";
 import Head from "next/head";
 import NavBar from "@/components/NavBar/NavBar";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import StoreProvider from "./StoreProvider";
 
 const openSans = Open_Sans({
   weight: ["300"],
@@ -22,11 +26,19 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={openSans.className}>
-        <header className="header">
-          <NavBar />
-        </header>
+        <StoreProvider>
+          <ToastContainer
+            position="top-center"
+            autoClose={1500}
+            theme="light"
+          />
 
-        {children}
+          <header className="header">
+            <NavBar />
+          </header>
+
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

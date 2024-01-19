@@ -16,3 +16,7 @@
 .nav-link:hover {
     text-shadow: 1px 1px 1px black;
 }
+
+.nav-item:nth-child(2) {
+    margin-right: 70px;
+}

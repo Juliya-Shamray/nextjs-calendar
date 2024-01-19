@@ -1,3 +1,4 @@
+import PrivateRoutes from "@/components/PrivateRoutes";
 import "./styles.css";
 
 const generateTimeSlots = () => {
@@ -25,30 +26,36 @@ const MyCalendar = () => {
   const timeSlots = generateTimeSlots();
 
   return (
-    <div className="container">
-      <div className="wrapper">
-        <ul>
-          {timeSlots.slice(0, 10).map((slot, index) => (
-            <li
-              key={index}
-              className={`${slot.isHalf ? "time half-hour" : "time full-hour"}`}
-            >
-              {slot.time}
-            </li>
-          ))}
-        </ul>
-        <ul className="list">
-          {timeSlots.slice(10).map((slot, index) => (
-            <li
-              key={index + 10}
-              className={`${slot.isHalf ? "time half-hour" : "time full-hour"}`}
-            >
-              {slot.time}
-            </li>
-          ))}
-        </ul>
+    <PrivateRoutes>
+      <div className="container">
+        <div className="wrapper">
+          <ul>
+            {timeSlots.slice(0, 10).map((slot, index) => (
+              <li
+                key={index}
+                className={`${
+                  slot.isHalf ? "time half-hour" : "time full-hour"
+                }`}
+              >
+                {slot.time}
+              </li>
+            ))}
+          </ul>
+          <ul className="list">
+            {timeSlots.slice(10).map((slot, index) => (
+              <li
+                key={index + 10}
+                className={`${
+                  slot.isHalf ? "time half-hour" : "time full-hour"
+                }`}
+              >
+                {slot.time}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
+    </PrivateRoutes>
   );
 };
 

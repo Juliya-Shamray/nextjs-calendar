@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.0.1",
+    "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "modern-normalize": "^2.0.0",
@@ -19,7 +21,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.1.0",
-    "redux": "^5.0.1",
+    "react-toastify": "^10.0.3",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0"
   },
   "devDependencies": {
