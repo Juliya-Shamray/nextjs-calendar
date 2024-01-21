@@ -1,5 +1,6 @@
 import axios from "axios";
 import { instance } from "./../auth/operations";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchEvents = createAsyncThunk(
   "calendar/fetchEvents",
@@ -29,7 +30,7 @@ export const removeEvent = createAsyncThunk(
   "calendar/removeEvent",
   async (eventId, thunkAPI) => {
     try {
-      await axios.delete(`/api/events/${eventId}`);
+      await instance.delete(`/api/events/${eventId}`);
       return eventId;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

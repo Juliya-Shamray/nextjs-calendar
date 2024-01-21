@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import loading from "./../../app/loading";
+import { addEvent, fetchEvents, removeEvent } from "./operations";
 
 const calendarSlice = createSlice({
   name: "calendar",
@@ -9,9 +10,10 @@ const calendarSlice = createSlice({
     loading: false,
   },
   extraReducers: (builder) => {
-    addCase(fetchEvents.pending, (state) => {
-      state.loading = true;
-    })
+    builder
+      .addCase(fetchEvents.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
         state.events = action.payload;
