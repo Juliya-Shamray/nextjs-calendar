@@ -1,5 +1,10 @@
+"use client";
 import PrivateRoutes from "@/components/PrivateRoutes";
 import "./styles.css";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectEvents } from "@/redux/calendar/selectors";
+import Modal from "@/components/Modal/Modal";
 
 const generateTimeSlots = () => {
   const startHour = 8;
@@ -23,7 +28,19 @@ const generateTimeSlots = () => {
 };
 
 const MyCalendar = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const events = useSelector(selectEvents);
   const timeSlots = generateTimeSlots();
+
+  const openModal = (slot) => {
+    setIsModalOpen(true);
+    setSelectedSlot(slot);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <PrivateRoutes>
@@ -36,8 +53,13 @@ const MyCalendar = () => {
                 className={`${
                   slot.isHalf ? "time half-hour" : "time full-hour"
                 }`}
+                onClick={() => openModal(slot)}
               >
                 {slot.time}
+                {events.length > 0 &&
+                  events.map((event, eventIndex) => (
+                    <div key={eventIndex}>{event.title}</div>
+                  ))}
               </li>
             ))}
           </ul>
@@ -48,13 +70,21 @@ const MyCalendar = () => {
                 className={`${
                   slot.isHalf ? "time half-hour" : "time full-hour"
                 }`}
+                onClick={() => openModal(slot)}
               >
                 {slot.time}
+                {events.length > 0 &&
+                  events.map((event, eventIndex) => (
+                    <div key={eventIndex}>{event.title}</div>
+                  ))}
               </li>
             ))}
           </ul>
         </div>
       </div>
+      {isModalOpen && (
+        <Modal closeModal={closeModal} selectedSlot={selectedSlot} />
+      )}
     </PrivateRoutes>
   );
 };
