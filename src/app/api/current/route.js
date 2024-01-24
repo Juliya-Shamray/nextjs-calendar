@@ -1,6 +1,8 @@
 import connect from "@/utils/db";
 import { getUserFromToken } from "../events/route";
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+
 export const GET = async (req, res) => {
   await connect();
 

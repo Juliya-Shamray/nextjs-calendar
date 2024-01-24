@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   loginThunk,
   logoutThunk,
-  // refreshThunk,
+  refreshThunk,
   registerThunk,
 } from "./operations";
 
@@ -24,18 +24,18 @@ export const authSlice = createSlice({
       .addCase(logoutThunk.fulfilled, (state) => {
         return (state = initialState);
       })
-      // .addCase(refreshThunk.fulfilled, (state, { payload }) => {
-      //   state.isRefresh = false;
-      //   state.user.name = payload.name;
-      //   state.user.email = payload.email;
-      //   state.isLogin = true;
-      // })
-      // .addCase(refreshThunk.pending, state => {
-      //   state.isRefresh = true;
-      // })
-      // .addCase(refreshThunk.rejected, state => {
-      //   state.isRefresh = false;
-      // })
+      .addCase(refreshThunk.fulfilled, (state, { payload }) => {
+        state.isRefresh = false;
+        state.user.name = payload.name;
+        state.user.email = payload.email;
+        state.isLogin = true;
+      })
+      .addCase(refreshThunk.pending, state => {
+        state.isRefresh = true;
+      })
+      .addCase(refreshThunk.rejected, state => {
+        state.isRefresh = false;
+      })
       .addCase(registerThunk.fulfilled, (state, { payload }) => {
         state.user = payload.user;
         state.isLogin = true;

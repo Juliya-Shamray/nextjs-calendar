@@ -11,9 +11,12 @@ export const POST = async (req, res) => {
 
   if (user) {
     return new NextResponse(
-      JSON.stringify({
+      {
         message: "Email in use",
-      })
+      },
+      {
+        status: 409,
+      }
     );
   }
 

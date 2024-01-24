@@ -1,14 +1,25 @@
 "use client";
 
-import { loginThunk } from "@/redux/auth/operations";
+import { loginThunk, refreshThunk } from "@/redux/auth/operations";
+import { selectIsLogin, selectIsRefresh } from "@/redux/auth/selectors";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { redirect } from "next/navigation";
 
 const Login = () => {
-  const dispatch = useDispatch();
   const router = useRouter();
+  const isLogin = useSelector(selectIsLogin);
+  const isRefresh = useSelector(selectIsRefresh);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(refreshThunk());
+  }, [dispatch]);
+  if (isLogin) {
+    redirect("/calendar");
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./styles.css";
 import { useSelector } from "react-redux";
-import { selectIsLogin } from "@/redux/auth/selectors";
+import { selectIsLogin, selectIsRefresh } from "@/redux/auth/selectors";
 import Logout from "@/app/logout/page";
 const NavBar = () => {
   const pathname = usePathname();
