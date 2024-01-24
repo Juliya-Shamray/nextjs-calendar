@@ -5,20 +5,10 @@ import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { addEvent } from "@/redux/calendar/operations";
 
-const convertTime = (timeString) => {
-  const date = new Date(`January 22, 2024 ${timeString}`);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  return `${hours.toString().padStart(2, "0")}:${minutes
-    .toString()
-    .padStart(2, "0")}`;
-};
-
-const Modal = ({ selectedSlot, closeModal }) => {
+const Modal = ({ closeModal }) => {
   const [title, setTitle] = useState("");
-  const [duration, setDuration] = useState("");
-  const [time, setTime] = useState(convertTime(selectedSlot.time));
+  const [duration, setDuration] = useState(0);
+  const [start, setStart] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,7 +34,7 @@ const Modal = ({ selectedSlot, closeModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addEvent({ title, time, duration }));
+    dispatch(addEvent({ title, start, duration }));
     closeModal();
   };
   const handleDelete = () => {};
@@ -67,12 +57,10 @@ const Modal = ({ selectedSlot, closeModal }) => {
           </div>
           <div>
             <input
-              type="time"
-              placeholder="time"
-              min={8}
-              max={17}
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+              type="number"
+              placeholder="start"
+              value={start}
+              onChange={(e) => setStart(e.target.value)}
               required
             />
           </div>

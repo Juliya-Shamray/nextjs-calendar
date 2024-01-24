@@ -1,4 +1,3 @@
-import axios from "axios";
 import { instance } from "./../auth/operations";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -18,8 +17,8 @@ export const addEvent = createAsyncThunk(
   "calendar/addEvent",
   async (event, thunkAPI) => {
     try {
-      await instance.post("/api/events", event);
-      return event;
+      const { data } = await instance.post("/api/events", event);
+      return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }

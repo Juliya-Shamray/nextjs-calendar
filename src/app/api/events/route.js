@@ -3,10 +3,11 @@ import Event from "@/models/Event";
 import { headers } from "next/headers";
 import User from "@/models/User";
 import jwt from "jsonwebtoken";
+import connect from "@/utils/db";
 
 export const getUserFromToken = async (token) => {
   try {
-    const { id } = jwt.verify(token, SECRET_KEY);
+    const { id } = jwt.verify(token, process.env.SECRET_KEY);
     const user = await User.findById(id);
 
     if (!user || !user.token || user.token !== token) {
@@ -20,12 +21,13 @@ export const getUserFromToken = async (token) => {
 };
 
 export const GET = async (req) => {
+  await connect();
   const headersList = headers();
   const authorization = headersList.get("authorization");
 
   try {
     const user = await getUserFromToken(authorization.split(" ")[1]);
-    const result = await Event.find({ owner: user.id });
+    const result = await Event.find({ owner: user._id });
 
     return NextResponse.json(
       {
@@ -40,19 +42,12 @@ export const GET = async (req) => {
 
 export const POST = async (req) => {
   const { start, duration, title } = await req.json();
+  await connect();
   const headersList = headers();
   const authorization = headersList.get("authorization");
 
   try {
     const user = await getUserFromToken(authorization.split(" ")[1]);
-
-    // const newEvent = new EventModel({
-    //   start,
-    //   duration,
-    //   title,
-    //   owner: user.id,
-    // });
-    // const savedEvent = await newEvent.save();
 
     const event = await Event.create({
       start,

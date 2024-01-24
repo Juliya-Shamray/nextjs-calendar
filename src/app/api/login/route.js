@@ -3,8 +3,10 @@ import User from "@/models/User";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import connect from "@/utils/db";
 
 export const POST = async (req, res) => {
+  await connect();
   const SECRET_KEY = process.env.SECRET_KEY;
   const { email, password } = await req.json();
 

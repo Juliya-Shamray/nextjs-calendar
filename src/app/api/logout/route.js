@@ -2,8 +2,10 @@ import User from "@/models/User";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { headers } from "next/headers";
+import connect from "@/utils/db";
 
 export const POST = async (req, res) => {
+  await connect();
   const SECRET_KEY = process.env.SECRET_KEY;
   const headersList = headers();
   const authorization = headersList.get("authorization");

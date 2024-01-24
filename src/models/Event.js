@@ -15,12 +15,11 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
     owner: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {
-    timestamps: true,
     versionKey: false,
   }
 );

@@ -47,16 +47,16 @@ export const logoutThunk = createAsyncThunk("logout", async (_, thunkAPI) => {
   }
 });
 
-// export const refreshThunk = createAsyncThunk("refresh", async (_, thunkAPI) => {
-//   const savedToken = thunkAPI.getState().auth.token;
+export const refreshThunk = createAsyncThunk("refresh", async (_, thunkAPI) => {
+  const savedToken = thunkAPI.getState().auth.token;
 
-//   if (!savedToken) return thunkAPI.rejectWithValue("You need login!!!");
+  if (!savedToken) return thunkAPI.rejectWithValue("You need login!!!");
 
-//   try {
-//     setToken(savedToken);
-//     const { data } = await instance.get("users/current");
-//     return data;
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue(error.message);
-//   }
-// });
+  try {
+    setToken(savedToken);
+    const { data } = await instance.get("/api/current");
+    return data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});

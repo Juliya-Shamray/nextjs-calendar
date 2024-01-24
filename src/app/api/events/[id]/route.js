@@ -2,8 +2,11 @@ import { headers } from "next/headers";
 import { getUserFromToken } from "../route";
 import Event from "@/models/Event";
 import { NextResponse } from "next/server";
+import connect from "@/utils/db";
 
 export const DELETE = async (req) => {
+  await connect();
+
   const headersList = headers();
   const authorization = headersList.get("authorization");
 
