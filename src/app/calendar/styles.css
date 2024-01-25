@@ -8,8 +8,8 @@
 }
 
 .time {
-    width: 220px;
-    height: 70px;
+    width: 240px;
+    height: 60px;
 }
 
 .wrapper {
@@ -25,10 +25,26 @@
 }
 
 .events {
+    display: flex;
+    gap: 5px;
+    margin-left: 40px;
+}
+
+.event {
     background-color: #E2ECF5;
     border-left: 2px solid #6E9ECF;
     font-size: 14px;
     padding: 5px;
+    width: 100%;
 
-    margin-left: 20px;
+    margin-top: -17px;
+}
+
+.invisible {
+    opacity: 0;
+    height: 10px;
+}
+
+.visible {
+    height: 50px;
 }

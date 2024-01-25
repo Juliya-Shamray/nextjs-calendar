@@ -1,10 +1,20 @@
 "use client";
 import PrivateRoutes from "@/components/PrivateRoutes";
 import "./styles.css";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { selectEvents } from "@/redux/calendar/selectors";
 import Modal from "@/components/Modal/Modal";
+import { fetchEvents } from "@/redux/calendar/operations";
+
+const minutesToTime = (minutes) => {
+  const hours =
+    Math.floor(minutes / 60) + 8 >= 13
+      ? Math.floor(Math.floor(minutes / 60 + 8) / 12)
+      : Math.floor(minutes / 60) + 8;
+  const mins = minutes % 60;
+  return `${String(hours)}:${String(mins).padStart(2, "0")}`;
+};
 
 const generateTimeSlots = () => {
   const startHour = 8;
@@ -21,25 +31,100 @@ const generateTimeSlots = () => {
     timeSlots.push({
       time: `${hour}:${minute === 0 ? "00" : minute}`,
       isHalf: i % 2 === 1,
+      isVisible: true,
     });
-  }
 
+    // Додавання додаткових слотів між 8:00 та 9:00
+    if (i < 18 && i % 2 === 0) {
+      const extraMinute1 = minute + 10;
+      const extraMinute2 = minute + 20;
+
+      timeSlots.push({
+        time: `${hour}:${extraMinute1 === 0 ? "00" : extraMinute1}`,
+        isHalf: true,
+        isVisible: false,
+      });
+
+      timeSlots.push({
+        time: `${hour}:${extraMinute2 === 0 ? "00" : extraMinute2}`,
+        isHalf: true,
+        isVisible: false,
+      });
+    }
+  }
+  console.log(timeSlots.length);
   return timeSlots;
 };
 
 const MyCalendar = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchEvents());
+  }, [dispatch]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+
   const events = useSelector(selectEvents);
   const timeSlots = generateTimeSlots();
 
-  const openModal = (slot) => {
+  const openModal = () => {
     setIsModalOpen(true);
-    setSelectedSlot(slot);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+  const parseTimeToMinutes = (time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const eventOccupiesSlots = (event, slot) => {
+    const eventStartTime = parseTimeToMinutes(minutesToTime(event.start));
+    const eventEndTime = eventStartTime + event.duration;
+
+    const slotStartTime = parseTimeToMinutes(slot.time);
+    const slotEndTime = slotStartTime + 30;
+
+    return (
+      (eventStartTime >= slotStartTime && eventStartTime < slotEndTime) ||
+      (eventEndTime > slotStartTime && eventEndTime <= slotEndTime) ||
+      (eventStartTime < slotStartTime && eventEndTime > slotEndTime)
+    );
+  };
+
+  const calculateEventHeight = (event) => {
+    const slotDuration = 15;
+
+    return (event.duration / slotDuration) * 30;
+  };
+
+  const calculateEventWidth = (eventsForSlot) => {
+    if (eventsForSlot.length > 1) {
+      return "50%";
+    }
+    return "100%";
+  };
+
+  const findEventsForSlot = (slot) => {
+    const eventsForSlot = events.filter((event) =>
+      eventOccupiesSlots(event, slot)
+    );
+
+    if (eventsForSlot.length > 0) {
+      const eventStartTimes = eventsForSlot.map((event) =>
+        parseTimeToMinutes(minutesToTime(event.start))
+      );
+      const slotStartTime = parseTimeToMinutes(slot.time);
+
+      const TIME_TOLERANCE = 20;
+      return eventsForSlot.filter(
+        (event, index) =>
+          Math.abs(eventStartTimes[index] - slotStartTime) <= TIME_TOLERANCE
+      );
+    }
+
+    return [];
   };
 
   return (
@@ -47,44 +132,74 @@ const MyCalendar = () => {
       <div className="container">
         <div className="wrapper">
           <ul>
-            {timeSlots.slice(0, 10).map((slot, index) => (
-              <li
-                key={index}
-                className={`${
-                  slot.isHalf ? "time half-hour" : "time full-hour"
-                }`}
-                onClick={() => openModal(slot)}
-              >
-                {slot.time}
-                {events.length > 0 &&
-                  events.map((event, eventIndex) => (
-                    <div key={eventIndex}>{event.title}</div>
-                  ))}
-              </li>
-            ))}
+            {timeSlots.slice(0, 19).map((slot, index) => {
+              const eventsForSlot = findEventsForSlot(slot);
+              console.log(eventsForSlot);
+
+              return (
+                <li
+                  key={index}
+                  className={`${
+                    slot.isHalf ? "time half-hour" : "time full-hour"
+                  } ${slot.isVisible ? "visible" : "invisible"}`}
+                  onClick={() => openModal(slot)}
+                >
+                  <span>{slot.time}</span>
+                  <div className="events">
+                    {eventsForSlot.length > 0 &&
+                      eventsForSlot.map((event, eventIndex) => (
+                        <div
+                          key={eventIndex}
+                          className="event"
+                          style={{
+                            height: calculateEventHeight(event) + "px",
+                            width: calculateEventWidth(eventsForSlot),
+                          }}
+                        >
+                          {`${event.title}`}
+                        </div>
+                      ))}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
-          <ul className="list">
-            {timeSlots.slice(10).map((slot, index) => (
-              <li
-                key={index + 10}
-                className={`${
-                  slot.isHalf ? "time half-hour" : "time full-hour"
-                }`}
-                onClick={() => openModal(slot)}
-              >
-                {slot.time}
-                {events.length > 0 &&
-                  events.map((event, eventIndex) => (
-                    <div key={eventIndex}>{event.title}</div>
-                  ))}
-              </li>
-            ))}
+          <ul>
+            {timeSlots.slice(19).map((slot, index) => {
+              const eventsForSlot = findEventsForSlot(slot);
+              console.log(eventsForSlot);
+              if (index % 2 === 0)
+                return (
+                  <li
+                    key={index}
+                    className={`${
+                      slot.isHalf ? "time half-hour" : "time full-hour"
+                    } ${slot.isVisible ? "visible" : "invisible"}`}
+                    onClick={() => openModal(slot)}
+                  >
+                    <span>{slot.time}</span>
+                    <div className="events">
+                      {eventsForSlot.length > 0 &&
+                        eventsForSlot.map((event, eventIndex) => (
+                          <div
+                            key={eventIndex}
+                            className="event"
+                            style={{
+                              height: calculateEventHeight(event) + "px",
+                              width: calculateEventWidth(eventsForSlot),
+                            }}
+                          >
+                            {`${event.title}`}
+                          </div>
+                        ))}
+                    </div>
+                  </li>
+                );
+            })}
           </ul>
         </div>
       </div>
-      {isModalOpen && (
-        <Modal closeModal={closeModal} selectedSlot={selectedSlot} />
-      )}
+      {isModalOpen && <Modal closeModal={closeModal} />}
     </PrivateRoutes>
   );
 };
