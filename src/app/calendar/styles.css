@@ -8,8 +8,13 @@
 }
 
 .time {
-    width: 240px;
     height: 60px;
+    display: flex;
+    gap: 20px;
+}
+
+.slot {
+    width: 25px;
 }
 
 .wrapper {
@@ -27,7 +32,8 @@
 .events {
     display: flex;
     gap: 5px;
-    margin-left: 40px;
+    width: 200px;
+
 }
 
 .event {
@@ -38,13 +44,7 @@
     width: 100%;
 
     margin-top: -17px;
-}
-
-.invisible {
-    opacity: 0;
-    height: 10px;
-}
-
-.visible {
-    height: 50px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
